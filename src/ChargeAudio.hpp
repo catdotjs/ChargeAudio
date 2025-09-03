@@ -1,5 +1,6 @@
-#include "../lib/miniaudio/miniaudio.c"
 #include "../lib/miniaudio/miniaudio.h"
+#include <Magnum/Magnum.h>
+#include <Magnum/Math/Vector.h>
 #include <string>
 
 namespace ChargeAudio {
@@ -9,6 +10,8 @@ public:
   void Play();
   void Pause();
   void Reset();
+  void SetPosition(Magnum::Vector3 position);
+  Magnum::Vector3 GetPosition();
   void SetVolume(float value);
   float GetVolume();
 

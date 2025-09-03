@@ -19,7 +19,8 @@ pkg_check_modules(AVCODEC REQUIRED libavcodec)
 pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
-add_library(ChargeAudio SHARED "src/ChargeAudio.hpp" "src/Audio.cpp")
+add_library(ChargeAudio SHARED "src/ChargeAudio.hpp" "src/Engine.cpp"
+                               "src/Sound.cpp")
 
 target_link_libraries(
   ChargeAudio
