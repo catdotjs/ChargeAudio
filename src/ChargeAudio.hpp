@@ -1,11 +1,13 @@
 #ifndef CHARGE_AUDIO_BASE_H
 #define CHARGE_AUDIO_BASE_H
-#include "../lib/miniaudio/miniaudio.h"
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
 #include <string>
 
 namespace ChargeAudio {
+namespace {
+#include "miniaudio/miniaudio.h"
+}
 class Sound {
 public:
   ~Sound();
@@ -35,5 +37,6 @@ private:
   ma_engine maEngine;
   ma_result maResponse;
 };
+
 } // namespace ChargeAudio
 #endif
