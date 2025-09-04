@@ -16,8 +16,7 @@ void Sound::SetPosition(Magnum::Vector3 position) {
 }
 Magnum::Vector3 Sound::GetPosition() {
   ma_vec3f pos = ma_sound_get_position(&maSound);
-  Magnum::Vector3 position(pos.x, pos.y, pos.z);
-  return position;
+  return Magnum::Vector3(pos.x, pos.y, pos.z);
 }
 void Sound::SetVolume(float value) { ma_sound_set_volume(&maSound, value); }
 float Sound::GetVolume() { return ma_sound_get_volume(&maSound); }

@@ -1,6 +1,7 @@
 #include "ChargeAudio.hpp"
 #include <Corrade/Containers/Pointer.h>
 #include <Corrade/Utility/Debug.h>
+#include <Magnum/Math/Vector3.h>
 
 #include <cstddef>
 #include <stdexcept>
@@ -16,6 +17,8 @@ Engine::Engine() {
         "Failed to init miniaudio engine. Check STDERR for more info.");
   }
 }
+
+Engine::~Engine() { ma_engine_uninit(&maEngine); }
 
 Containers::Pointer<Sound> Engine::CreateSound(std::string filepath) {
   auto sound = Containers::Pointer<Sound>(new Sound());
@@ -34,5 +37,16 @@ Containers::Pointer<Sound> Engine::CreateSound(std::string filepath) {
 }
 
 // Controls
+void Engine::SetPosition(Magnum::Vector3 position) {
+  ma_engine_listener_set_position(&maEngine, 0, position.x(), position.y(),
+                                  position.z());
+}
+
+Magnum::Vector3 Engine::GetPosition() {
+  ma_vec3f pos = ma_engine_listener_get_position(&maEngine, 0);
+  return Magnum::Vector3(pos.x, pos.y, pos.z);
+  ;
+}
+
 void Engine::SetVolume(float value) { ma_engine_set_volume(&maEngine, value); }
 float Engine::GetVolume() { return ma_engine_get_volume(&maEngine); }

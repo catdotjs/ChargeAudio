@@ -6,16 +6,18 @@
 #include <string>
 
 namespace ChargeAudio {
-using namespace Corrade;
-namespace {
+namespace _ma {
 #include "miniaudio/miniaudio.h"
 }
+using namespace Corrade;
+using namespace _ma;
 class Sound {
 public:
   ~Sound();
   void Play();
   void Pause();
   void Reset();
+
   void SetPosition(Magnum::Vector3 position);
   Magnum::Vector3 GetPosition();
   void SetVolume(float value);
@@ -31,7 +33,11 @@ private:
 class Engine {
 public:
   Engine();
+  ~Engine();
   Containers::Pointer<Sound> CreateSound(std::string filepath);
+
+  void SetPosition(Magnum::Vector3 position);
+  Magnum::Vector3 GetPosition();
   void SetVolume(float value);
   float GetVolume();
 
