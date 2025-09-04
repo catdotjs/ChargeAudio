@@ -2,6 +2,7 @@
 #define CHARGE_AUDIO_BASE_H
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
+#include <memory>
 #include <string>
 
 namespace ChargeAudio {
@@ -29,7 +30,7 @@ private:
 class Engine {
 public:
   Engine();
-  Sound CreateSound(std::string filepath);
+  std::unique_ptr<Sound> CreateSound(std::string filepath);
   void SetVolume(float value);
   float GetVolume();
 

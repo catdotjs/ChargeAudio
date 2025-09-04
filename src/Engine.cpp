@@ -16,12 +16,12 @@ Engine::Engine() {
   }
 }
 
-Sound Engine::CreateSound(std::string filepath) {
-  Sound sound;
-  sound.baseEngine = this;
+std::unique_ptr<Sound> Engine::CreateSound(std::string filepath) {
+  auto sound = std::unique_ptr<Sound>(new Sound());
+  sound->baseEngine = this;
 
   maResponse = ma_sound_init_from_file(&maEngine, filepath.c_str(), 0, NULL,
-                                       NULL, &sound.maSound);
+                                       NULL, &sound->maSound);
   if (maResponse != MA_SUCCESS) {
     Utility::Error{} << "Failed to create the sound from the file: "
                      << filepath.c_str() << " (" << maResponse << ")";

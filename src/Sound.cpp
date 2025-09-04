@@ -3,6 +3,7 @@
 #include <Magnum/Math/Vector3.h>
 
 using namespace ChargeAudio;
+Sound::Sound() {}
 Sound::~Sound() { ma_sound_uninit(&maSound); }
 
 // Controls
