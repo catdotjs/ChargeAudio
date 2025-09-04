@@ -1,4 +1,5 @@
 #include "ChargeAudio.hpp"
+#include <Corrade/Containers/Pointer.h>
 #include <Corrade/Utility/Debug.h>
 
 #include <cstddef>
@@ -16,8 +17,8 @@ Engine::Engine() {
   }
 }
 
-std::unique_ptr<Sound> Engine::CreateSound(std::string filepath) {
-  auto sound = std::unique_ptr<Sound>(new Sound());
+Containers::Pointer<Sound> Engine::CreateSound(std::string filepath) {
+  auto sound = Containers::Pointer<Sound>(new Sound());
   sound->baseEngine = this;
 
   maResponse = ma_sound_init_from_file(&maEngine, filepath.c_str(), 0, NULL,

@@ -1,11 +1,12 @@
 #ifndef CHARGE_AUDIO_BASE_H
 #define CHARGE_AUDIO_BASE_H
+#include <Corrade/Containers/Containers.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
-#include <memory>
 #include <string>
 
 namespace ChargeAudio {
+using namespace Corrade;
 namespace {
 #include "miniaudio/miniaudio.h"
 }
@@ -30,7 +31,7 @@ private:
 class Engine {
 public:
   Engine();
-  std::unique_ptr<Sound> CreateSound(std::string filepath);
+  Containers::Pointer<Sound> CreateSound(std::string filepath);
   void SetVolume(float value);
   float GetVolume();
 
