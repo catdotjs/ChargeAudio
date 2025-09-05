@@ -13,11 +13,14 @@ using namespace Corrade;
 using namespace _ma;
 class Sound {
 public:
+  enum SoundState { Idle, Playing, Paused, Finished };
+
   ~Sound();
   void Play();
   void Pause();
   void Reset();
 
+  SoundState GetState();
   void SetPosition(Magnum::Vector3 position);
   Magnum::Vector3 GetPosition();
   void SetVolume(float value);
@@ -27,6 +30,7 @@ private:
   Sound();
   class Engine *baseEngine;
   ma_sound maSound;
+  SoundState state = SoundState::Idle;
   friend class Engine;
 };
 

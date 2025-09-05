@@ -6,9 +6,19 @@ using namespace ChargeAudio;
 Sound::Sound() {}
 Sound::~Sound() { ma_sound_uninit(&maSound); }
 
+Sound::SoundState Sound::GetState() { return state; }
+
 // Controls
-void Sound::Play() { ma_sound_start(&maSound); }
-void Sound::Pause() { ma_sound_stop(&maSound); }
+void Sound::Play() {
+  ma_sound_start(&maSound);
+  state = Sound::SoundState::Playing;
+}
+
+void Sound::Pause() {
+  ma_sound_stop(&maSound);
+  state = Sound::SoundState::Paused;
+}
+
 void Sound::Reset() { ma_sound_seek_to_pcm_frame(&maSound, 0); }
 
 void Sound::SetPosition(Magnum::Vector3 position) {
