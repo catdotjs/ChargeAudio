@@ -27,7 +27,9 @@ public:
   float GetVolume();
 
 private:
-  Sound();
+  Sound(class Engine *engine);
+  static void onSoundFinish(void *customData, ma_sound *);
+
   class Engine *baseEngine;
   ma_sound maSound;
   SoundState state = SoundState::Idle;
@@ -65,6 +67,7 @@ private:
   ma_result maResponse;
   ma_uint64 listenerCounter = 0;
   friend class Listener;
+  friend class Sound;
 };
 
 } // namespace ChargeAudio

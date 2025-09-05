@@ -3,7 +3,8 @@
 #include <Magnum/Math/Vector3.h>
 
 using namespace ChargeAudio;
-Sound::Sound() {}
+Sound::Sound(Engine *engine) : baseEngine(engine) {}
+
 Sound::~Sound() { ma_sound_uninit(&maSound); }
 
 Sound::SoundState Sound::GetState() { return state; }
@@ -30,3 +31,9 @@ Magnum::Vector3 Sound::GetPosition() {
 }
 void Sound::SetVolume(float value) { ma_sound_set_volume(&maSound, value); }
 float Sound::GetVolume() { return ma_sound_get_volume(&maSound); }
+
+// STATICs
+void Sound::onSoundFinish(void *customData, ma_sound *) {
+  auto sound = static_cast<Sound *>(customData);
+  sound->state = SoundState::Finished;
+}

@@ -21,17 +21,19 @@ Engine::Engine() {
 Engine::~Engine() { ma_engine_uninit(&maEngine); }
 
 Containers::Pointer<Sound> Engine::CreateSound(std::string filepath) {
-  auto sound = Containers::Pointer<Sound>(new Sound());
-  sound->baseEngine = this;
-
+  auto sound = Containers::Pointer<Sound>(new Sound(this));
   maResponse = ma_sound_init_from_file(&maEngine, filepath.c_str(), 0, NULL,
                                        NULL, &sound->maSound);
+  sound->maSound.endCallback = Sound::onSoundFinish;
+  sound->maSound.pEndCallbackUserData = sound.get();
+
   if (maResponse != MA_SUCCESS) {
     Utility::Error{} << "Failed to create the sound from the file: "
                      << filepath.c_str() << " (" << maResponse << ")";
     throw new std::runtime_error(
         "Failed to create the sound from file. Check STDERR for more info.");
   }
+
   return sound;
 }
 
