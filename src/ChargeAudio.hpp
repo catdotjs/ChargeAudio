@@ -40,6 +40,8 @@ class Listener {
 public:
   void SetEnabled(bool isEnabled);
   bool GetEnabled();
+  void SetDirection(Magnum::Vector3 position);
+  Magnum::Vector3 GetDirection();
   void SetPosition(Magnum::Vector3 position);
   Magnum::Vector3 GetPosition();
 
