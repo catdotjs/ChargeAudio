@@ -30,20 +30,35 @@ private:
   friend class Engine;
 };
 
+class Listener {
+public:
+  void SetPosition(Magnum::Vector3 position);
+  Magnum::Vector3 GetPosition();
+
+private:
+  Listener();
+  class Engine *baseEngine;
+  ma_uint64 listenerID;
+  friend class Engine;
+};
+
 class Engine {
 public:
   Engine();
   ~Engine();
-  Containers::Pointer<Sound> CreateSound(std::string filepath);
 
-  void SetPosition(Magnum::Vector3 position);
-  Magnum::Vector3 GetPosition();
+  // Creating tools
+  Containers::Pointer<Sound> CreateSound(std::string filepath);
+  Containers::Pointer<Listener> CreateListener();
+
   void SetVolume(float value);
   float GetVolume();
 
 private:
   ma_engine maEngine;
   ma_result maResponse;
+  ma_uint64 listenerCounter = 0;
+  friend class Listener;
 };
 
 } // namespace ChargeAudio

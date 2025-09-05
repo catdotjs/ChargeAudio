@@ -32,21 +32,17 @@ Containers::Pointer<Sound> Engine::CreateSound(std::string filepath) {
     throw new std::runtime_error(
         "Failed to create the sound from file. Check STDERR for more info.");
   }
-
   return sound;
 }
 
+Containers::Pointer<Listener> Engine::CreateListener() {
+  auto listener = Containers::Pointer<Listener>(new Listener());
+  listener->baseEngine = this;
+  listener->listenerID = listenerCounter++;
+
+  return listener;
+}
+
 // Controls
-void Engine::SetPosition(Magnum::Vector3 position) {
-  ma_engine_listener_set_position(&maEngine, 0, position.x(), position.y(),
-                                  position.z());
-}
-
-Magnum::Vector3 Engine::GetPosition() {
-  ma_vec3f pos = ma_engine_listener_get_position(&maEngine, 0);
-  return Magnum::Vector3(pos.x, pos.y, pos.z);
-  ;
-}
-
 void Engine::SetVolume(float value) { ma_engine_set_volume(&maEngine, value); }
 float Engine::GetVolume() { return ma_engine_get_volume(&maEngine); }
