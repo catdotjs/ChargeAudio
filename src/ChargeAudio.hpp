@@ -32,13 +32,15 @@ private:
 
 class Listener {
 public:
+  void SetEnabled(bool isEnabled);
+  bool GetEnabled();
   void SetPosition(Magnum::Vector3 position);
   Magnum::Vector3 GetPosition();
 
 private:
   Listener();
   class Engine *baseEngine;
-  ma_uint64 listenerID;
+  ma_uint32 listenerID;
   friend class Engine;
 };
 
