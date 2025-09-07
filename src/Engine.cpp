@@ -20,14 +20,15 @@ Engine::Engine() {
 
 Engine::~Engine() { ma_engine_uninit(&maEngine); }
 
-Containers::Pointer<Sound> Engine::CreateSound(const std::string filepath) {
-  auto sound = Containers::Pointer<Sound>(new Sound(this));
-  sound->maConfig.pFilePath = filepath.c_str();
-  sound->maConfig.flags = 0;
-  sound->maConfig.pInitialAttachment = NULL;
-  sound->maConfig.pDoneFence = NULL;
-  sound->init("Failed to create the sound from the file: " + filepath);
-  return sound;
+Containers::Pointer<Sound> Engine::CreateSound(const std::string filepath,
+                                               bool streamFile) {
+  return Containers::Pointer<Sound>(new Sound(
+      this,
+      [filepath, streamFile](Sound *sound) {
+        sound->maConfig.pFilePath = filepath.c_str();
+        sound->maConfig.flags = (streamFile ? MA_SOUND_FLAG_STREAM : 0);
+      },
+      "Failed to create the sound from the file: " + filepath));
 }
 
 Containers::Pointer<Listener> Engine::CreateListener() {

@@ -3,6 +3,7 @@
 #include <Corrade/Containers/Containers.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
+#include <functional>
 #include <string>
 
 namespace ChargeAudio {
@@ -27,8 +28,8 @@ public:
   float GetVolume();
 
 private:
-  Sound(class Engine *engine);
-  void init(std::string additionalErrorMessage = "");
+  Sound(class Engine *engine, std::function<void(Sound *)> setupFunction,
+        std::string additionalErrorMessage = "");
   static void onSoundFinish(void *customData, ma_sound *);
 
   class Engine *baseEngine;
@@ -61,7 +62,8 @@ public:
   ~Engine();
 
   // Creating tools
-  Containers::Pointer<Sound> CreateSound(std::string filepath);
+  Containers::Pointer<Sound> CreateSound(std::string filepath,
+                                         bool streamFile = false);
   Containers::Pointer<Listener> CreateListener();
 
   void SetVolume(float value);
