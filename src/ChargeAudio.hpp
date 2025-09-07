@@ -28,11 +28,14 @@ public:
 
 private:
   Sound(class Engine *engine);
+  void init(std::string additionalErrorMessage = "");
   static void onSoundFinish(void *customData, ma_sound *);
 
   class Engine *baseEngine;
   ma_sound maSound;
+  ma_sound_config maConfig;
   SoundState state = SoundState::Idle;
+
   friend class Engine;
 };
 

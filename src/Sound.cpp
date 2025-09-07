@@ -1,13 +1,30 @@
 #include "ChargeAudio.hpp"
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector3.h>
+#include <stdexcept>
 
 using namespace ChargeAudio;
-Sound::Sound(Engine *engine) : baseEngine(engine) {}
+Sound::Sound(Engine *engine) : baseEngine(engine) {
+  maConfig = ma_sound_config_init_2(&baseEngine->maEngine);
+  maConfig.endCallback = Sound::onSoundFinish;
+  maConfig.pEndCallbackUserData = this;
+}
 
 Sound::~Sound() { ma_sound_uninit(&maSound); }
 
 Sound::SoundState Sound::GetState() { return state; }
+
+void Sound::init(std::string additionalErrorMessage) {
+  ma_result maResponse =
+      ma_sound_init_ex(&baseEngine->maEngine, &maConfig, &maSound);
+  if (maResponse != MA_SUCCESS) {
+    Utility::Error{} << "Failed to create a new sound" << " (" << maResponse
+                     << ")";
+    throw new std::runtime_error(
+        "Failed to create a new sound. Check STDERR for more info.\n" +
+        additionalErrorMessage);
+  }
+}
 
 // Controls
 void Sound::Play() {
