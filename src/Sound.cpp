@@ -1,4 +1,5 @@
 #include "ChargeAudio.hpp"
+#include <Corrade/Utility/Debug.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector3.h>
 
@@ -38,6 +39,22 @@ float Sound::GetPlaybackTime() {
   ma_sound_get_cursor_in_seconds(&this->maSound, &time);
   return time;
 }
+
+// true or false depending on if the playback was set
+bool Sound::SetPlaybackTime(float time) {
+  // Better to just catch it from the start
+  if (time < 0) {
+    return false;
+  }
+
+  bool result = ma_sound_seek_to_second(&maSound, time) != MA_SUCCESS;
+  if (result) {
+    Utility::Error{} << "Failed to set playback time to " << time
+                     << " on a sound instance";
+  }
+  return result;
+}
+
 // Controls
 void Sound::Play() {
   ma_sound_start(&maSound);
