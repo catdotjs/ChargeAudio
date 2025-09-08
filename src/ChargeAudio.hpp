@@ -22,8 +22,9 @@ public:
   void Reset();
 
   SoundState GetState();
-  float GetTotalRuntime();
-  float GetRuntime();
+  float GetDuration();
+  float GetPlaybackTime();
+  bool SetRuntime();
   void SetPosition(Magnum::Vector3 position);
   Magnum::Vector3 GetPosition();
   void SetVolume(float value);

@@ -27,13 +27,13 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
 Sound::~Sound() { ma_sound_uninit(&maSound); }
 Sound::SoundState Sound::GetState() { return state; }
 
-float Sound::GetTotalRuntime() {
+float Sound::GetDuration() {
   float time;
   ma_sound_get_length_in_seconds(&this->maSound, &time);
   return time;
 }
 
-float Sound::GetRuntime() {
+float Sound::GetPlaybackTime() {
   float time;
   ma_sound_get_cursor_in_seconds(&this->maSound, &time);
   return time;
