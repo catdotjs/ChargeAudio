@@ -1,6 +1,7 @@
 #ifndef CHARGE_AUDIO_BASE_H
 #define CHARGE_AUDIO_BASE_H
 #include <Corrade/Containers/Containers.h>
+#include <Corrade/Containers/Optional.h>
 #include <Corrade/Containers/Pointer.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
@@ -19,6 +20,14 @@ typedef Containers::Pointer<class Listener> ListenerContainer;
 class Sound {
 public:
   enum class SoundState { Idle, Playing, Paused, Finished };
+
+  // No copying
+  Sound(const Sound &) = delete;
+  Sound &operator=(const Sound &) = delete;
+
+  // No moving
+  Sound(Sound &&) = delete;
+  Sound &operator=(Sound &&) = delete;
 
   ~Sound();
   void Play();
@@ -49,6 +58,10 @@ private:
 
 class Listener {
 public:
+  // No copying, can move
+  Listener(const Listener &) = delete;
+  Listener &operator=(const Listener &) = delete;
+
   void SetEnabled(bool isEnabled);
   const bool GetEnabled();
   void SetDirection(Magnum::Vector3 position);
@@ -66,6 +79,15 @@ private:
 class Engine {
 public:
   Engine();
+
+  // No copying
+  Engine(const Engine &) = delete;
+  Engine &operator=(const Engine &) = delete;
+
+  // No movement
+  Engine(Engine &&) = delete;
+  Engine &operator=(Engine &&) = delete;
+
   ~Engine();
 
   // Creating tools

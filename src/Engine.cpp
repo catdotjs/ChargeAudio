@@ -1,6 +1,7 @@
 #include "ChargeAudio.hpp"
 #include <Corrade/Containers/Containers.h>
 #include <Corrade/Containers/Pointer.h>
+#include <Corrade/Tags.h>
 #include <Corrade/Utility/Debug.h>
 #include <Magnum/Math/Vector3.h>
 
