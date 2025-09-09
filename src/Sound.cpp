@@ -26,15 +26,15 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
 }
 
 Sound::~Sound() { ma_sound_uninit(&maSound); }
-Sound::SoundState Sound::GetState() { return state; }
+const Sound::SoundState Sound::GetState() { return state; }
 
-float Sound::GetDuration() {
+const float Sound::GetDuration() {
   float time;
   ma_sound_get_length_in_seconds(&this->maSound, &time);
   return time;
 }
 
-float Sound::GetPlaybackTime() {
+const float Sound::GetPlaybackTime() {
   float time;
   ma_sound_get_cursor_in_seconds(&this->maSound, &time);
   return time;
@@ -71,12 +71,12 @@ void Sound::Reset() { ma_sound_seek_to_pcm_frame(&maSound, 0); }
 void Sound::SetPosition(Magnum::Vector3 position) {
   ma_sound_set_position(&maSound, position.x(), position.y(), position.z());
 }
-Magnum::Vector3 Sound::GetPosition() {
+const Magnum::Vector3 Sound::GetPosition() {
   ma_vec3f pos = ma_sound_get_position(&maSound);
   return Magnum::Vector3(pos.x, pos.y, pos.z);
 }
 void Sound::SetVolume(float value) { ma_sound_set_volume(&maSound, value); }
-float Sound::GetVolume() { return ma_sound_get_volume(&maSound); }
+const float Sound::GetVolume() { return ma_sound_get_volume(&maSound); }
 
 // STATICs
 void Sound::onSoundFinish(void *customData, ma_sound *) {

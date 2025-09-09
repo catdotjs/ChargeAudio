@@ -1,4 +1,5 @@
 #include "ChargeAudio.hpp"
+#include <Corrade/Containers/Containers.h>
 #include <Corrade/Containers/Pointer.h>
 #include <Corrade/Utility/Debug.h>
 #include <Magnum/Math/Vector3.h>
@@ -20,9 +21,9 @@ Engine::Engine() {
 
 Engine::~Engine() { ma_engine_uninit(&maEngine); }
 
-Containers::Pointer<Sound> Engine::CreateSound(const std::string filepath,
-                                               bool streamFile) {
-  return Containers::Pointer<Sound>(new Sound(
+SoundContainer Engine::CreateSound(const std::string filepath,
+                                   bool streamFile) {
+  return SoundContainer(new Sound(
       this,
       [filepath, streamFile](Sound *sound) {
         sound->maConfig.pFilePath = filepath.c_str();
@@ -31,8 +32,8 @@ Containers::Pointer<Sound> Engine::CreateSound(const std::string filepath,
       "Failed to create the sound from the file: " + filepath));
 }
 
-Containers::Pointer<Listener> Engine::CreateListener() {
-  auto listener = Containers::Pointer<Listener>(new Listener());
+ListenerContainer Engine::CreateListener() {
+  auto listener = ListenerContainer(new Listener());
   listener->baseEngine = this;
   listener->listenerID = listenerCounter++;
 
@@ -41,4 +42,4 @@ Containers::Pointer<Listener> Engine::CreateListener() {
 
 // Controls
 void Engine::SetVolume(float value) { ma_engine_set_volume(&maEngine, value); }
-float Engine::GetVolume() { return ma_engine_get_volume(&maEngine); }
+const float Engine::GetVolume() { return ma_engine_get_volume(&maEngine); }

@@ -1,6 +1,7 @@
 #ifndef CHARGE_AUDIO_BASE_H
 #define CHARGE_AUDIO_BASE_H
 #include <Corrade/Containers/Containers.h>
+#include <Corrade/Containers/Optional.h>
 #include <Corrade/Containers/Pointer.h>
 #include <Magnum/Magnum.h>
 #include <Magnum/Math/Vector.h>
@@ -14,8 +15,8 @@ namespace _ma {
 using namespace Corrade;
 using namespace _ma;
 
-typedef Containers::Pointer<class Sound> SoundContainer;
-typedef Containers::Pointer<class Listener> ListenerContainer;
+typedef Containers::Optional<class Sound> SoundContainer;
+typedef Containers::Optional<class Listener> ListenerContainer;
 class Sound {
 public:
   enum class SoundState { Idle, Playing, Paused, Finished };
