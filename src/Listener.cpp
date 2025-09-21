@@ -1,6 +1,4 @@
 #include "ChargeAudio.hpp"
-#include <Magnum/Magnum.h>
-#include <Magnum/Math/Vector3.h>
 
 using namespace ChargeAudio;
 

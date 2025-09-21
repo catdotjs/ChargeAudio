@@ -1,14 +1,11 @@
 #include "ChargeAudio.hpp"
-#include <Corrade/Utility/Debug.h>
-#include <Magnum/Magnum.h>
-#include <Magnum/Math/Vector3.h>
 
 #include <functional>
 #include <stdexcept>
 
 using namespace ChargeAudio;
 Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
-             std::string additionalErrorMessage)
+             SoundType soundType, std::string additionalErrorMessage)
     : baseEngine(engine) {
   maConfig = ma_sound_config_init_2(&baseEngine->maEngine);
   maConfig.endCallback = Sound::onSoundFinish;
@@ -23,10 +20,16 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
         "Failed to create a new sound. Check STDERR for more info.\n" +
         additionalErrorMessage);
   }
+  type = soundType;
 }
 
-Sound::~Sound() { ma_sound_uninit(&maSound); }
+Sound::~Sound() {
+  ma_pcm_rb_uninit(&maRingBuffer);
+  ma_sound_uninit(&maSound);
+}
+
 const Sound::SoundState Sound::GetState() { return state; }
+const Sound::SoundType Sound::GetSoundType() { return type; }
 
 const float Sound::GetDuration() {
   float time;

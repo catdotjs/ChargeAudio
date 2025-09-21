@@ -1,26 +1,23 @@
 #ifndef CHARGE_AUDIO_BASE_H
 #define CHARGE_AUDIO_BASE_H
+#include "miniaudio/miniaudio.h"
+
 #include <Corrade/Containers/Containers.h>
-#include <Corrade/Containers/Optional.h>
 #include <Corrade/Containers/Pointer.h>
-#include <Magnum/Magnum.h>
-#include <Magnum/Math/Vector.h>
+#include <Magnum/Math/Vector3.h>
+
 #include <functional>
 #include <string>
 
 namespace ChargeAudio {
-namespace _ma {
-#include "miniaudio/miniaudio.h"
-}
 using namespace Corrade;
-using namespace _ma;
 
 typedef Containers::Pointer<class Sound> SoundContainer;
 typedef Containers::Pointer<class Listener> ListenerContainer;
 class Sound {
 public:
   enum class SoundState { Idle, Playing, Paused, Finished };
-
+  enum class SoundType { FromFile, RawPCM };
   // No copying
   Sound(const Sound &) = delete;
   Sound &operator=(const Sound &) = delete;
@@ -35,6 +32,8 @@ public:
   void Reset();
 
   const SoundState GetState();
+  const SoundType GetSoundType();
+
   const float GetPlaybackTime();
   bool SetPlaybackTime(float time);
   const float GetDuration();
@@ -45,13 +44,15 @@ public:
 
 private:
   Sound(class Engine *engine, std::function<void(Sound *)> setupFunction,
-        std::string additionalErrorMessage = "");
+        SoundType type, std::string additionalErrorMessage = "");
   static void onSoundFinish(void *customData, ma_sound *);
 
   class Engine *baseEngine;
   ma_sound maSound;
   ma_sound_config maConfig;
+  ma_pcm_rb maRingBuffer;
   SoundState state = SoundState::Idle;
+  SoundType type;
 
   friend class Engine;
 };
@@ -78,7 +79,7 @@ private:
 
 class Engine {
 public:
-  Engine();
+  Engine(uint32_t sampleRate = 44100, uint32_t channels = 2);
 
   // No copying
   Engine(const Engine &) = delete;
@@ -91,15 +92,21 @@ public:
   ~Engine();
 
   // Creating tools
+  SoundContainer CreateSound(int bufferLengthInSeconds);
   SoundContainer CreateSound(std::string filepath, bool streamFile = false);
   ListenerContainer CreateListener();
 
   void SetVolume(float value);
   const float GetVolume();
 
+  uint32_t GetSampleRate();
+  uint32_t GetChannelCount();
+
 private:
   ma_engine maEngine;
+  ma_engine_config maConfig;
   ma_result maResponse;
+  ma_decoder maStero;
   ma_uint64 listenerCounter = 0;
   friend class Listener;
   friend class Sound;
