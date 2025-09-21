@@ -25,6 +25,7 @@ Engine::~Engine() { ma_engine_uninit(&maEngine); }
 uint32_t Engine::GetSampleRate() { return maEngine.sampleRate; }
 uint32_t Engine::GetChannelCount() { return ma_engine_get_channels(&maEngine); }
 
+// Use case: Stream of PCM data
 SoundContainer Engine::CreateSound(int bufferLengthInSeconds) {
   return SoundContainer(new Sound(
       this,
@@ -40,7 +41,32 @@ SoundContainer Engine::CreateSound(int bufferLengthInSeconds) {
                                        "Check STDERR for more info.");
         }
       },
-      Sound::SoundType::RawPCM, "Failed to create the sound from the data: "));
+      Sound::SoundType::StreamedRawPCM,
+      "Failed to create the sound from ring buffer: "));
+}
+
+// Use case: 1 time set up and use audio
+SoundContainer Engine::CreateSound(uint8_t *data, int length) {
+  return SoundContainer(new Sound(
+      this,
+      [data, length, channels = GetChannelCount(),
+       sampleRate = GetSampleRate()](Sound *sound) {
+        ma_audio_buffer_config config = ma_audio_buffer_config_init(
+            ma_format_s32, channels, length / (4 * channels), data, nullptr);
+        ma_result result =
+            ma_audio_buffer_init_copy(&config, &sound->maAudioBuffer);
+
+        if (result != MA_SUCCESS) {
+          Utility::Error{} << "Failed to create a new audio buffer!" << " ("
+                           << result << ")";
+          throw new std::runtime_error("Failed to create a new audio buffer! "
+                                       "Check STDERR for more info.");
+        }
+
+        sound->maConfig.pDataSource = &sound->maAudioBuffer;
+      },
+      Sound::SoundType::RawPCM,
+      "Failed to create the sound from the PCM data: "));
 }
 
 SoundContainer Engine::CreateSound(const std::string filepath,

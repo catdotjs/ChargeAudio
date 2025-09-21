@@ -24,7 +24,16 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
 }
 
 Sound::~Sound() {
-  ma_pcm_rb_uninit(&maRingBuffer);
+  switch (type) {
+  case Sound::SoundType::RawPCM:
+    ma_audio_buffer_uninit_and_free(&maAudioBuffer);
+    break;
+  case Sound::SoundType::StreamedRawPCM:
+    ma_pcm_rb_uninit(&maRingBuffer);
+    break;
+  default:
+    break;
+  }
   ma_sound_uninit(&maSound);
 }
 

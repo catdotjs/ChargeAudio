@@ -17,7 +17,7 @@ typedef Containers::Pointer<class Listener> ListenerContainer;
 class Sound {
 public:
   enum class SoundState { Idle, Playing, Paused, Finished };
-  enum class SoundType { FromFile, RawPCM };
+  enum class SoundType { FromFile, StreamedRawPCM, RawPCM };
   // No copying
   Sound(const Sound &) = delete;
   Sound &operator=(const Sound &) = delete;
@@ -51,6 +51,7 @@ private:
   ma_sound maSound;
   ma_sound_config maConfig;
   ma_pcm_rb maRingBuffer;
+  ma_audio_buffer maAudioBuffer;
   SoundState state = SoundState::Idle;
   SoundType type;
 
@@ -93,6 +94,7 @@ public:
 
   // Creating tools
   SoundContainer CreateSound(int bufferLengthInSeconds);
+  SoundContainer CreateSound(uint8_t *data, int length);
   SoundContainer CreateSound(std::string filepath, bool streamFile = false);
   ListenerContainer CreateListener();
 
