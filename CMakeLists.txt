@@ -20,8 +20,9 @@ pkg_check_modules(AVUTIL REQUIRED libavutil)
 pkg_check_modules(SWRESAMPLE REQUIRED libswresample)
 
 add_library(
-  ChargeAudio SHARED "src/ChargeAudio.hpp" "src/Engine.cpp" "src/Sound.cpp"
-                     "src/Listener.cpp" "lib/miniaudio/miniaudio.c")
+  ChargeAudio SHARED
+  "src/ChargeAudio.hpp" "src/Engine.cpp" "src/Sound.cpp" "src/Listener.cpp"
+  "src/ErrorHandling.cpp" "lib/miniaudio/miniaudio.c")
 
 target_link_libraries(
   ChargeAudio

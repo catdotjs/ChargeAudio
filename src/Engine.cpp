@@ -1,9 +1,7 @@
 #include "ChargeAudio.hpp"
 #include "miniaudio/miniaudio.h"
 
-#include <Corrade/Utility/Debug.h>
 #include <cstdint>
-#include <stdexcept>
 
 using namespace ChargeAudio;
 using namespace Corrade;
@@ -13,11 +11,8 @@ Engine::Engine(uint32_t sampleRate, uint32_t channels) {
   maConfig.sampleRate = sampleRate;
   maConfig.channels = channels;
 
-  if ((maResponse = ma_engine_init(&maConfig, &maEngine)) != MA_SUCCESS) {
-    Utility::Error{} << "Could not init miniaudio (" << maResponse << ")";
-    throw new std::runtime_error(
-        "Failed to init miniaudio engine. Check STDERR for more info.");
-  }
+  ThrowOnRuntimeError("Failed to init miniaudio engine",
+                      ma_engine_init(&maConfig, &maEngine));
 }
 
 Engine::~Engine() { ma_engine_uninit(&maEngine); }
@@ -34,12 +29,7 @@ SoundContainer Engine::CreateSound(int bufferLengthInSeconds) {
         ma_result result = ma_pcm_rb_init(
             ma_format_s32, channels, sampleRate * channels * length, nullptr,
             nullptr, &sound->maRingBuffer);
-        if (result != MA_SUCCESS) {
-          Utility::Error{} << "Failed to create a new ring buffer!" << " ("
-                           << result << ")";
-          throw new std::runtime_error("Failed to create a new ring buffer! "
-                                       "Check STDERR for more info.");
-        }
+        ThrowOnRuntimeError("Failed to create a new ring buffer!", result);
       },
       Sound::SoundType::StreamedRawPCM,
       "Failed to create the sound from ring buffer: "));
@@ -56,13 +46,7 @@ SoundContainer Engine::CreateSound(uint8_t *data, int length) {
         ma_result result =
             ma_audio_buffer_init_copy(&config, &sound->maAudioBuffer);
 
-        if (result != MA_SUCCESS) {
-          Utility::Error{} << "Failed to create a new audio buffer!" << " ("
-                           << result << ")";
-          throw new std::runtime_error("Failed to create a new audio buffer! "
-                                       "Check STDERR for more info.");
-        }
-
+        ThrowOnRuntimeError("Failed to create a new audio buffer!", result);
         sound->maConfig.pDataSource = &sound->maAudioBuffer;
       },
       Sound::SoundType::RawPCM,

@@ -1,7 +1,6 @@
 #include "ChargeAudio.hpp"
 
 #include <functional>
-#include <stdexcept>
 
 using namespace ChargeAudio;
 Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
@@ -13,13 +12,8 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
   setupFunction(this);
   ma_result maResponse =
       ma_sound_init_ex(&baseEngine->maEngine, &maConfig, &maSound);
-  if (maResponse != MA_SUCCESS) {
-    Utility::Error{} << "Failed to create a new sound" << " (" << maResponse
-                     << ")";
-    throw new std::runtime_error(
-        "Failed to create a new sound. Check STDERR for more info.\n" +
-        additionalErrorMessage);
-  }
+  ThrowOnRuntimeError("Failed to create a new sound. " + additionalErrorMessage,
+                      maResponse);
   type = soundType;
 }
 
@@ -78,7 +72,13 @@ void Sound::Pause() {
   state = Sound::SoundState::Paused;
 }
 
-void Sound::Reset() { ma_sound_seek_to_pcm_frame(&maSound, 0); }
+void Sound::Reset() {
+  if (type == SoundType::StreamedRawPCM) {
+    ThrowOnRuntimeError("You cannot reset on Streamed RawPCM sounds!");
+  }
+
+  ma_sound_seek_to_pcm_frame(&maSound, 0);
+}
 
 void Sound::SetPosition(Magnum::Vector3 position) {
   ma_sound_set_position(&maSound, position.x(), position.y(), position.z());

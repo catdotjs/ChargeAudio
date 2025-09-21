@@ -114,5 +114,8 @@ private:
   friend class Sound;
 };
 
+void ThrowOnRuntimeError(std::string message,
+                         ma_result errorType = ma_result::MA_ERROR);
+
 } // namespace ChargeAudio
 #endif
