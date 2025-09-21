@@ -9,7 +9,9 @@ Sound::Sound(Engine *engine, std::function<void(Sound *)> setupFunction,
   maConfig = ma_sound_config_init_2(&baseEngine->maEngine);
   maConfig.endCallback = Sound::onSoundFinish;
   maConfig.pEndCallbackUserData = this;
+
   setupFunction(this);
+
   ma_result maResponse =
       ma_sound_init_ex(&baseEngine->maEngine, &maConfig, &maSound);
   ThrowOnRuntimeError("Failed to create a new sound. " + additionalErrorMessage,
@@ -63,18 +65,20 @@ bool Sound::SetPlaybackTime(float time) {
 
 // Controls
 void Sound::Play() {
-  ma_sound_start(&maSound);
+  ThrowOnRuntimeError("Failed to start the sound.", ma_sound_start(&maSound));
   state = Sound::SoundState::Playing;
 }
 
 void Sound::Pause() {
-  ma_sound_stop(&maSound);
+  ThrowOnRuntimeError("Failed to pause the sound.", ma_sound_stop(&maSound));
   state = Sound::SoundState::Paused;
 }
 
 void Sound::Reset() {
   if (type == SoundType::StreamedRawPCM) {
-    ThrowOnRuntimeError("You cannot reset on Streamed RawPCM sounds!");
+    ThrowOnRuntimeError(
+        "You cannot reset on Streamed RawPCM sounds! Since the buffer is a "
+        "ring buffer there isn't a \"start\" to return to.");
   }
 
   ma_sound_seek_to_pcm_frame(&maSound, 0);
