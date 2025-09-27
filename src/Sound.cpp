@@ -113,7 +113,7 @@ void Sound::WriteToRingBuffer(uint8_t *data, uint32_t length) {
                                                 &writePosition));
 
     memcpy(writePosition, dataPosition,
-           (framesAvailable * baseEngine->frameSize) - 8);
+           framesAvailable * baseEngine->frameSize);
     ma_pcm_rb_commit_write(&maRingBuffer, framesAvailable);
 
     framesWritten += framesAvailable;
