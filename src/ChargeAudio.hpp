@@ -42,6 +42,9 @@ public:
   void SetVolume(float value);
   const float GetVolume();
 
+  // For StreamedRawPCM
+  void WriteToRingBuffer(uint8_t *data, uint32_t length);
+
 private:
   Sound(class Engine *engine, std::function<void(Sound *)> setupFunction,
         SoundType type, std::string additionalErrorMessage = "");
@@ -110,6 +113,8 @@ private:
   ma_result maResponse;
   ma_decoder maStero;
   ma_uint64 listenerCounter = 0;
+  ma_format PCMFormat = ma_format_f32;
+  ma_uint8 frameSize;
   friend class Listener;
   friend class Sound;
 };

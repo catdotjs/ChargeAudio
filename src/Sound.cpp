@@ -1,5 +1,8 @@
 #include "ChargeAudio.hpp"
 
+#include <Corrade/Utility/Debug.h>
+#include <cassert>
+#include <cstring>
 #include <functional>
 
 using namespace ChargeAudio;
@@ -93,6 +96,30 @@ const Magnum::Vector3 Sound::GetPosition() {
 }
 void Sound::SetVolume(float value) { ma_sound_set_volume(&maSound, value); }
 const float Sound::GetVolume() { return ma_sound_get_volume(&maSound); }
+
+// StreamedRawPCM
+void Sound::WriteToRingBuffer(uint8_t *data, uint32_t length) {
+  uint8_t *dataPosition = data;
+  void *writePosition;
+  uint32_t framesToWrite = length / baseEngine->frameSize, framesWritten = 0,
+           framesAvailable = 0;
+
+  while (framesWritten < framesToWrite) {
+    framesAvailable = framesToWrite - framesWritten;
+
+    // Sometimes this can fail. Actually terrifying.
+    ThrowOnRuntimeError("PCM ring buffer could not allocate... Oh no",
+                        ma_pcm_rb_acquire_write(&maRingBuffer, &framesAvailable,
+                                                &writePosition));
+
+    memcpy(writePosition, dataPosition,
+           (framesAvailable * baseEngine->frameSize) - 8);
+    ma_pcm_rb_commit_write(&maRingBuffer, framesAvailable);
+
+    framesWritten += framesAvailable;
+    dataPosition += framesAvailable * baseEngine->frameSize;
+  }
+}
 
 // STATICs
 void Sound::onSoundFinish(void *customData, ma_sound *) {

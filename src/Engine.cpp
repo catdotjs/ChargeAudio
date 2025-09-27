@@ -10,6 +10,7 @@ Engine::Engine(uint32_t sampleRate, uint32_t channels) {
   maConfig = ma_engine_config_init();
   maConfig.sampleRate = sampleRate;
   maConfig.channels = channels;
+  frameSize = ma_get_bytes_per_sample(PCMFormat) * channels;
 
   ThrowOnRuntimeError("Failed to init miniaudio engine",
                       ma_engine_init(&maConfig, &maEngine));
@@ -27,9 +28,10 @@ SoundContainer Engine::CreateSound(int bufferLengthInSeconds) {
       [length = bufferLengthInSeconds, channels = GetChannelCount(),
        sampleRate = GetSampleRate()](Sound *sound) {
         ma_result result = ma_pcm_rb_init(
-            ma_format_s32, channels, sampleRate * channels * length, nullptr,
-            nullptr, &sound->maRingBuffer);
+            sound->baseEngine->PCMFormat, channels, sampleRate * length,
+            nullptr, nullptr, &sound->maRingBuffer);
         ThrowOnRuntimeError("Failed to create a new ring buffer!", result);
+        sound->maConfig.pDataSource = &sound->maRingBuffer;
       },
       Sound::SoundType::StreamedRawPCM,
       "Failed to create the sound from ring buffer: "));
@@ -42,7 +44,8 @@ SoundContainer Engine::CreateSound(uint8_t *data, int length) {
       [data, length, channels = GetChannelCount(),
        sampleRate = GetSampleRate()](Sound *sound) {
         ma_audio_buffer_config config = ma_audio_buffer_config_init(
-            ma_format_s32, channels, length / (4 * channels), data, nullptr);
+            sound->baseEngine->PCMFormat, channels,
+            length / sound->baseEngine->frameSize, data, nullptr);
         ma_result result =
             ma_audio_buffer_init_copy(&config, &sound->maAudioBuffer);
 
